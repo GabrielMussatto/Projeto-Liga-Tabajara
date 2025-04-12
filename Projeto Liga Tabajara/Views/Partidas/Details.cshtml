@@ -1,0 +1,83 @@
+﻿@model Projeto_Liga_Tabajara.Models.Partida
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Partida</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TimeMandante.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TimeMandante.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TimeVisitante.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TimeVisitante.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rodada)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rodada)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Estadio)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Estadio)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GolsMandante)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GolsMandante)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GolsVisitante)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GolsVisitante)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Resultado)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Resultado)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
