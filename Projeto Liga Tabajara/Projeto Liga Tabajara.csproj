@@ -143,6 +143,8 @@
       <DependentUpon>202504120313464_Inicial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ClassificacaoTime.cs" />
+    <Compile Include="Models\RegistrarPlacarViewModel.cs" />
     <Compile Include="Models\ComissaoTecnica.cs" />
     <Compile Include="Models\Estatistica.cs" />
     <Compile Include="Models\Jogador.cs" />
@@ -199,8 +201,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Times\Create.cshtml" />
     <Content Include="Views\Times\Delete.cshtml" />
@@ -212,26 +212,17 @@
     <Content Include="Views\Jogadors\Details.cshtml" />
     <Content Include="Views\Jogadors\Edit.cshtml" />
     <Content Include="Views\Jogadors\Index.cshtml" />
-    <Content Include="Views\Estatisticas\Create.cshtml" />
-    <Content Include="Views\Estatisticas\Delete.cshtml" />
-    <Content Include="Views\Estatisticas\Details.cshtml" />
-    <Content Include="Views\Estatisticas\Edit.cshtml" />
     <Content Include="Views\Estatisticas\Index.cshtml" />
     <Content Include="Views\ComissaoTecnicas\Create.cshtml" />
     <Content Include="Views\ComissaoTecnicas\Delete.cshtml" />
     <Content Include="Views\ComissaoTecnicas\Details.cshtml" />
     <Content Include="Views\ComissaoTecnicas\Edit.cshtml" />
     <Content Include="Views\ComissaoTecnicas\Index.cshtml" />
-    <Content Include="Views\Ligas\Create.cshtml" />
-    <Content Include="Views\Ligas\Delete.cshtml" />
-    <Content Include="Views\Ligas\Details.cshtml" />
-    <Content Include="Views\Ligas\Edit.cshtml" />
-    <Content Include="Views\Ligas\Index.cshtml" />
-    <Content Include="Views\Partidas\Create.cshtml" />
-    <Content Include="Views\Partidas\Delete.cshtml" />
     <Content Include="Views\Partidas\Details.cshtml" />
     <Content Include="Views\Partidas\Edit.cshtml" />
     <Content Include="Views\Partidas\Index.cshtml" />
+    <Content Include="Views\Partidas\GerarPartidas.cshtml" />
+    <Content Include="Views\Partidas\AtualizarResultado.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
