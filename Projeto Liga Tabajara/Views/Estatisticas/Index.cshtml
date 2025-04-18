@@ -1,46 +1,136 @@
 ﻿@model IEnumerable<Projeto_Liga_Tabajara.Models.Estatistica>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Estatísticas";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<style>
+    /* Estilo base para ambas as tabelas */
+    .estatisticas-table,
+    .artilheiros-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+    }
+        /* Cabeçalhos */
+        .estatisticas-table th,
+        .artilheiros-table th {
+            background-color: #005f99;
+            color: #fff;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        /* Células */
+        .estatisticas-table td,
+        .artilheiros-table td {
+            padding: 0.75rem;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+        /* Zebra striping */
+        .estatisticas-table tbody tr:nth-child(even),
+        .artilheiros-table tbody tr:nth-child(even) {
+            background-color: #e9f7fe;
+        }
+        /* Hover */
+        .estatisticas-table tbody tr:hover,
+        .artilheiros-table tbody tr:hover {
+            background-color: #d0efff;
+        }
+        /* Alinhamento: primeira coluna à esquerda, demais centralizados */
+        .estatisticas-table th:first-child,
+        .estatisticas-table td:first-child,
+        .artilheiros-table th:first-child,
+        .artilheiros-table td:first-child {
+            text-align: left;
+        }
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Jogador.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Partida.Estadio)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Gols)
-        </th>
-        <th></th>
-    </tr>
+        .estatisticas-table th:not(:first-child),
+        .estatisticas-table td:not(:first-child),
+        .artilheiros-table th:not(:first-child),
+        .artilheiros-table td:not(:first-child) {
+            text-align: center;
+        }
+</style>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Jogador.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Partida.Estadio)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Gols)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+<h2>Estatísticas Artilheiros por Rodada</h2>
+
+@{
+    // Ordena primeiro por rodada (asc) e depois, dentro de cada rodada, por gols (desc)
+    var porRodada = Model
+        .OrderBy(e => e.Partida.Rodada)
+        .ThenByDescending(e => e.Gols)
+        .ToList();
 }
 
+<table class="estatisticas-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.First().Jogador.Nome)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Gols)</th>
+            <th>Partida</th>
+            <th>@Html.DisplayNameFor(m => m.First().Partida.Rodada)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Partida.Estadio)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in porRodada)
+        {
+            <tr>
+                <td>@item.Jogador.Nome</td>
+                <td>@item.Gols</td>
+                <td>@($"{item.Partida.TimeMandante.Nome} x {item.Partida.TimeVisitante.Nome}")</td>
+                <td>@item.Partida.Rodada</td>
+                <td>@item.Partida.Estadio</td>
+            </tr>
+        }
+    </tbody>
 </table>
+
+<hr />
+
+<h2>Artilheiros do Campeonato</h2>
+
+@{
+    var artilheiros = Model
+        .GroupBy(e => new { e.Jogador.Id, e.Jogador.Nome, Time = e.Jogador.Time.Nome })
+        .Select(g => new
+        {
+            Nome = g.Key.Nome,
+            Time = g.Key.Time,
+            TotalGols = g.Sum(e => e.Gols)
+        })
+        .OrderByDescending(a => a.TotalGols)
+        .ToList();
+}
+
+@if (artilheiros.Any())
+{
+    <table class="artilheiros-table">
+        <thead>
+            <tr>
+                <th>Jogador</th>
+                <th>Time</th>
+                <th>Total de Gols</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in artilheiros)
+            {
+                <tr>
+                    <td>@a.Nome</td>
+                    <td>@a.Time</td>
+                    <td>@a.TotalGols</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nenhum gol foi registrado ainda.</p>
+}
