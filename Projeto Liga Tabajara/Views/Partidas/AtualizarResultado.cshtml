@@ -1,0 +1,123 @@
+﻿@model Projeto_Liga_Tabajara.Models.RegistrarPlacarViewModel
+
+@{
+    ViewBag.Title = "Registrar Placar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-container {
+        background-color: #f0f8ff;
+        padding: 2rem;
+        border-radius: 8px;
+        max-width: 700px;
+        margin: 2rem auto;
+        font-family: Arial, sans-serif;
+    }
+
+        .form-container h2 {
+            color: #005f99;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+    .form-group.row {
+        margin-bottom: 1rem;
+        align-items: center;
+    }
+
+    .form-group .col-form-label {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .form-control-static {
+        padding-top: .375rem;
+        color: #555;
+    }
+
+    .btn-block-group {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Registrar Placar</h2>
+
+    @using (Html.BeginForm("AtualizarResultado", "Partidas", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.PartidaId)
+
+        <!-- Mandante / Visitante / Data -->
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-sm-right">Mandante:</label>
+            <div class="col-sm-9">
+                <p class="form-control-static">@Model.MandanteNome</p>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-sm-right">Visitante:</label>
+            <div class="col-sm-9">
+                <p class="form-control-static">@Model.VisitanteNome</p>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-sm-right">Data:</label>
+            <div class="col-sm-9">
+                <p class="form-control-static">@Model.Data.ToString("yyyy-MM-dd")</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- Gols do Mandante -->
+        <h4 style="color:#005f99; text-align:center; margin:1.5rem 0 .75rem">Gols do Mandante</h4>
+        for (int i = 0; i < Model.Mandante.Count; i++)
+        {
+            <div class="form-group row">
+                <label class="col-sm-6 col-form-label">
+                    @($"{Model.Mandante[i].Posicao} – {Model.Mandante[i].Nome}")
+                </label>
+                <div class="col-sm-2">
+                    @Html.HiddenFor(m => m.Mandante[i].JogadorId)
+                    @Html.EditorFor(
+                        m => m.Mandante[i].Gols,
+                        new { htmlAttributes = new { @class = "form-control", type = "number", min = "0" } }
+                    )
+                    @Html.ValidationMessageFor(m => m.Mandante[i].Gols, "", new { @class = "text-danger small" })
+                </div>
+            </div>
+        }
+
+        <hr />
+
+        <!-- Gols do Visitante -->
+        <h4 style="color:#005f99; text-align:center; margin:1.5rem 0 .75rem">Gols do Visitante</h4>
+        for (int i = 0; i < Model.Visitante.Count; i++)
+        {
+            <div class="form-group row">
+                <label class="col-sm-6 col-form-label">
+                    @($"{Model.Visitante[i].Posicao} – {Model.Visitante[i].Nome}")
+                </label>
+                <div class="col-sm-2">
+                    @Html.HiddenFor(m => m.Visitante[i].JogadorId)
+                    @Html.EditorFor(
+                        m => m.Visitante[i].Gols,
+                        new { htmlAttributes = new { @class = "form-control", type = "number", min = "0" } }
+                    )
+                    @Html.ValidationMessageFor(m => m.Visitante[i].Gols, "", new { @class = "text-danger small" })
+                </div>
+            </div>
+        }
+
+        <!-- Botões -->
+        <div class="form-group row btn-block-group">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary">Registrar Placar</button>
+                @Html.ActionLink("Cancelar", "Index", "Partidas", null, new { @class = "btn btn-default ml-2" })
+            </div>
+        </div>
+    }
+</div>

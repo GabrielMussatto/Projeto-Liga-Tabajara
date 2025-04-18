@@ -1,76 +1,179 @@
 ﻿@model IEnumerable<Projeto_Liga_Tabajara.Models.Partida>
+@using Projeto_Liga_Tabajara.Models
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Partidas";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<style>
+    /* --- Mesma aparência das tabelas de Jogadores/Comissão --- */
+    .partidas-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+    }
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.TimeMandante.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TimeVisitante.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Data)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rodada)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Estadio)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.GolsMandante)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.GolsVisitante)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Resultado)
-        </th>
-        <th></th>
-    </tr>
+        .partidas-table th {
+            background-color: #005f99;
+            color: white;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.TimeMandante.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TimeVisitante.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Data)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Rodada)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Estadio)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GolsMandante)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GolsVisitante)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Resultado)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+        .partidas-table td {
+            padding: 0.75rem;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+
+        .partidas-table tbody tr:nth-child(even) {
+            background-color: #e9f7fe;
+        }
+
+        .partidas-table tbody tr:hover {
+            background-color: #d0efff;
+        }
+
+        .partidas-table th:first-child,
+        .partidas-table td:first-child {
+            text-align: left;
+        }
+
+        .partidas-table th:not(:first-child),
+        .partidas-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        .partidas-table td.actions {
+            white-space: nowrap;
+            min-width: 180px;
+        }
+
+        .partidas-table .actions a {
+            margin: 0 0.25rem;
+            font-size: 0.85rem;
+        }
+
+            .partidas-table .actions a:hover {
+                text-decoration: underline;
+            }
+
+    /* --- Formulário de busca, sem quebra de linha --- */
+    .search-form {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 auto 1rem;
+        max-width: 600px;
+    }
+
+        .search-form .form-control {
+            height: 2.4rem;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-form input[type="text"] {
+            flex: 1 1 200px;
+            min-width: 150px;
+        }
+
+        .search-form button {
+            height: 2.6rem;
+            padding: 0 1rem;
+            white-space: nowrap;
+        }
+
+    /* --- Toolbar superior --- */
+    .header-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="header-toolbar">
+    <h2>Partidas</h2>
+    @Html.ActionLink("Gerar Partidas", "GerarPartidas", null, new { @class = "btn btn-success" })
+</div>
+
+@using (Html.BeginForm("Index", "Partidas", FormMethod.Get))
+{
+    <div class="search-form">
+        <input type="text"
+               name="time"
+               value="@(ViewBag.TimeFilter ?? "")"
+               class="form-control"
+               placeholder="Time (mandante ou visitante)" />
+
+        <input type="text"
+               name="estadio"
+               value="@(ViewBag.EstadioFilter ?? "")"
+               class="form-control"
+               placeholder="Estádio" />
+
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+        <button type="submit"
+                name="clear"
+                value="true"
+                class="btn btn-secondary">
+            Limpar filtros
+        </button>
+    </div>
 }
 
+<table class="partidas-table">
+    <thead>
+        <tr>
+            <th>Mandante</th>
+            <th>Visitante</th>
+            <th>@Html.DisplayNameFor(m => m.First().Data)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Rodada)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Estadio)</th>
+            <th>Gols M</th>
+            <th>Gols V</th>
+            <th>Resultado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.TimeMandante.Nome</td>
+                <td>@p.TimeVisitante.Nome</td>
+                <td>@p.Data.ToString("dd-MM-yyyy")</td>
+                <td>@p.Rodada</td>
+                <td>@p.Estadio</td>
+                <td>
+                    @(p.Resultado == Resultado.NaoRealizada
+                      ? "--"
+                      : p.GolsMandante.ToString())
+                </td>
+                <td>
+                    @(p.Resultado == Resultado.NaoRealizada
+                      ? "--"
+                      : p.GolsVisitante.ToString())
+                </td>
+                <td>
+                    @(p.Resultado == Resultado.NaoRealizada
+                      ? "Não realizada"
+                      : p.Resultado.ToString())
+                </td>
+                <td class="actions">
+                    @Html.ActionLink("Detalhes", "Details", new { id = p.Id }, new { @class = "btn btn-sm btn-outline-info" })
+                    @Html.ActionLink("Registrar Placar", "AtualizarResultado", new { id = p.Id }, new { @class = "btn btn-sm btn-outline-primary ml-2" })
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

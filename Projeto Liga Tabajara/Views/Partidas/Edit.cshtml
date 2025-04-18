@@ -1,23 +1,23 @@
 ﻿@model Projeto_Liga_Tabajara.Models.Partida
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit Partida";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Edit</h2>
-
+<h2>Edit Partida</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+    @Html.HiddenFor(model => model.Id)
+
     <div class="form-horizontal">
-        <h4>Partida</h4>
+        <h4>Editar Agendamento de Partida</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
 
+        <!-- Data da Partida -->
         <div class="form-group">
             @Html.LabelFor(model => model.Data, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -26,6 +26,7 @@
             </div>
         </div>
 
+        <!-- Rodada -->
         <div class="form-group">
             @Html.LabelFor(model => model.Rodada, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -34,6 +35,7 @@
             </div>
         </div>
 
+        <!-- Estádio -->
         <div class="form-group">
             @Html.LabelFor(model => model.Estadio, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -42,45 +44,25 @@
             </div>
         </div>
 
+        <!-- Time Mandante -->
         <div class="form-group">
-            @Html.LabelFor(model => model.TimeMandanteId, "TimeMandanteId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Time Mandante", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("TimeMandanteId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("TimeMandanteId", (SelectList)ViewBag.TimeMandanteId, "Select Time", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.TimeMandanteId, "", new { @class = "text-danger" })
             </div>
         </div>
 
+        <!-- Time Visitante -->
         <div class="form-group">
-            @Html.LabelFor(model => model.TimeVisitanteId, "TimeVisitanteId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Time Visitante", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("TimeVisitanteId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("TimeVisitanteId", (SelectList)ViewBag.TimeVisitanteId, "Select Time", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.TimeVisitanteId, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.GolsMandante, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.GolsMandante, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.GolsMandante, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.GolsVisitante, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.GolsVisitante, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.GolsVisitante, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Resultado, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Resultado, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Resultado, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        @* Se desejar, você pode incluir campos para atualização dos gols, mas isso pode ser feito via ação específica. *@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

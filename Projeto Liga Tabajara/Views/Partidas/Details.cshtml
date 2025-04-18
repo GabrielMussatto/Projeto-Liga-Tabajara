@@ -1,83 +1,141 @@
 ﻿@model Projeto_Liga_Tabajara.Models.Partida
+@using Projeto_Liga_Tabajara.Models
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalhes da Partida";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<style>
+    .details-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-<div>
-    <h4>Partida</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.TimeMandante.Nome)
-        </dt>
+        .details-container h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #005f99;
+        }
 
+        .details-container dl dt {
+            font-weight: 600;
+            margin-top: 1rem;
+            color: #333;
+        }
+
+        .details-container dl dd {
+            margin: 0 0 0.75rem 0;
+            padding-left: 0.5rem;
+            color: #555;
+        }
+
+        .details-container table {
+            width: 100%;
+            margin-top: 1.5rem;
+            border-collapse: collapse;
+        }
+
+            .details-container table th,
+            .details-container table td {
+                padding: 0.5rem;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            .details-container table th {
+                background-color: #005f99;
+                color: white;
+            }
+
+        .details-container .action-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+            .details-container .action-links a {
+                display: inline-block;
+                margin: 0 0.5rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                color: #fff;
+                background-color: #005f99;
+                border-radius: 4px;
+                text-decoration: none;
+            }
+
+                .details-container .action-links a:hover {
+                    background-color: #004070;
+                }
+</style>
+
+<div class="details-container">
+    <h2>Detalhes da Partida</h2>
+
+    <dl>
+        <dt>@Html.DisplayNameFor(m => m.TimeMandante.Nome)</dt>
+        <dd>@Html.DisplayFor(m => m.TimeMandante.Nome)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.TimeVisitante.Nome)</dt>
+        <dd>@Html.DisplayFor(m => m.TimeVisitante.Nome)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Data)</dt>
+        <dd>@Html.DisplayFor(m => m.Data)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Rodada)</dt>
+        <dd>@Html.DisplayFor(m => m.Rodada)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Estadio)</dt>
+        <dd>@Html.DisplayFor(m => m.Estadio)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.GolsMandante)</dt>
         <dd>
-            @Html.DisplayFor(model => model.TimeMandante.Nome)
+            @(Model.Resultado == Resultado.NaoRealizada
+               ? "--"
+               : Model.GolsMandante.ToString())
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.TimeVisitante.Nome)
-        </dt>
-
+        <dt>@Html.DisplayNameFor(m => m.GolsVisitante)</dt>
         <dd>
-            @Html.DisplayFor(model => model.TimeVisitante.Nome)
+            @(Model.Resultado == Resultado.NaoRealizada
+               ? "--"
+               : Model.GolsVisitante.ToString())
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Data)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Data)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Rodada)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Rodada)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Estadio)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Estadio)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.GolsMandante)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.GolsMandante)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.GolsVisitante)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.GolsVisitante)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Resultado)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Resultado)
-        </dd>
-
+        <dt>@Html.DisplayNameFor(m => m.Resultado)</dt>
+        <dd>@Html.DisplayFor(m => m.Resultado)</dd>
     </dl>
+
+    @* Nova seção: quem fez gols *@
+    @if (Model.Estatisticas != null && Model.Estatisticas.Any())
+    {
+        <h3>Artilheiros desta partida</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Jogador</th>
+                    <th>Gols</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var est in Model.Estatisticas)
+                {
+                    <tr>
+                        <td>@est.Jogador.Time.Nome</td>
+                        <td>@est.Jogador.Nome</td>
+                        <td>@est.Gols</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <div class="action-links">
+        @Html.ActionLink("Voltar à Lista", "Index")
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
