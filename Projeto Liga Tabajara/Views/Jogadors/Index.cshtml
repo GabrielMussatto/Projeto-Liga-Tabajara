@@ -1,82 +1,179 @@
 ﻿@model IEnumerable<Projeto_Liga_Tabajara.Models.Jogador>
+@using Projeto_Liga_Tabajara.Models
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Jogadores";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<style>
+    /* --- Tabela de jogadores --- */
+    .jogadores-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+    }
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Time.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Nacionalidade)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Posicao)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.NumeroCamisa)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Altura)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Peso)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PePreferido)
-        </th>
-        <th></th>
-    </tr>
+        .jogadores-table th {
+            background-color: #005f99;
+            color: white;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Time.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DataNascimento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nacionalidade)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Posicao)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NumeroCamisa)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Altura)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Peso)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PePreferido)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+        .jogadores-table td {
+            padding: 0.75rem;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+
+        .jogadores-table tbody tr:nth-child(even) {
+            background-color: #e9f7fe;
+        }
+
+        .jogadores-table tbody tr:hover {
+            background-color: #d0efff;
+        }
+
+        .jogadores-table th:first-child,
+        .jogadores-table td:first-child {
+            text-align: left;
+        }
+
+        .jogadores-table th:not(:first-child),
+        .jogadores-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        .jogadores-table td.actions {
+            white-space: nowrap;
+            min-width: 180px;
+        }
+
+        .jogadores-table .actions a {
+            margin: 0 0.25rem;
+            font-size: 0.85rem;
+        }
+
+            .jogadores-table .actions a:hover {
+                text-decoration: underline;
+            }
+
+    /* --- Formulário de busca centralizado --- */
+    .search-form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 auto 1rem;
+        max-width: 800px;
+    }
+
+        .search-form .form-control {
+            height: 2.4rem;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-form input[type="text"] {
+            flex: 1 1 200px;
+            min-width: 150px;
+        }
+
+        .search-form select {
+            flex: 0 1 160px;
+        }
+
+        .search-form button {
+            height: 2.6rem;
+            padding: 0 1rem;
+        }
+
+    /* --- Cabeçalho com título e botão --- */
+    .header-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+</style>
+
+<div class="header-toolbar">
+    <h2>Jogadores</h2>
+    @Html.ActionLink("Novo Jogador", "Create", null, new { @class = "btn btn-success" })
+</div>
+
+@using (Html.BeginForm("Index", "Jogadors", FormMethod.Get))
+{
+    <div class="search-form">
+        <input type="text"
+               name="nome"
+               value="@ViewBag.NomeFilter"
+               class="form-control"
+               placeholder="Buscar por nome" />
+
+        @Html.DropDownList(
+            "posicao",
+            (SelectList)ViewBag.PosicaoList,
+            "Todas as posições",
+            new { @class = "form-control" }
+        )
+
+        @Html.DropDownList(
+            "pePreferido",
+            (SelectList)ViewBag.PePreferidoList,
+            "Todos os pés",
+            new { @class = "form-control" }
+        )
+
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
 }
 
+<table class="jogadores-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.First().Time.Nome)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Nome)</th>
+            <th>@Html.DisplayNameFor(m => m.First().DataNascimento)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Nacionalidade)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Posicao)</th>
+            <th>@Html.DisplayNameFor(m => m.First().NumeroCamisa)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Altura)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Peso)</th>
+            <th>@Html.DisplayNameFor(m => m.First().PePreferido)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Time.Nome</td>
+                <td>@item.Nome</td>
+                <td>@item.DataNascimento.ToString("dd/MM/yyyy")</td>
+                <td>@item.Nacionalidade</td>
+                <td>@item.Posicao</td>
+                <td>@item.NumeroCamisa</td>
+                <td>
+                    @item.Altura.ToString("0.00") m
+                </td>
+                <td>
+                    @($"{item.Peso:0.0} kg")
+                </td>
+                <td>@item.PePreferido</td>
+                <td class="actions">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-secondary" })
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

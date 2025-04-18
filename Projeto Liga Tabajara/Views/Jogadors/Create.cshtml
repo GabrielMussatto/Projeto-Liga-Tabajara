@@ -1,103 +1,154 @@
 ﻿@model Projeto_Liga_Tabajara.Models.Jogador
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Jogador";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create</h2>
+<style>
+    /* Container centralizado e largura fixa */
+    .form-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
+        /* Cabeçalho do formulário */
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #005f99;
+        }
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Jogador</h4>
-        <hr />
+        /* Campos uniformes e centralizados */
+        .form-container .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* centraliza horizontalmente */
+            margin-bottom: 1rem;
+        }
+
+        .form-container label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-align: center; /* centraliza o texto do label */
+        }
+
+        .form-container .form-control,
+        .form-container select {
+            width: 80%; /* reduz largura para 80% do container */
+            height: 2.5rem;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin: 0; /* remove margens automáticas */
+        }
+
+        /* Botão centralizado */
+        .form-container .btn-submit {
+            display: block;
+            width: 50%;
+            margin: 1.5rem auto 0;
+            padding: 0.6rem;
+            font-size: 1rem;
+            background-color: #005f99;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+            .form-container .btn-submit:hover {
+                background-color: #004070;
+            }
+
+        /* Link de voltar */
+        .form-container .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #005f99;
+        }
+</style>
+
+<div class="form-container">
+    <h2>Cadastrar Jogador</h2>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <!-- Nome -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.Nome)
+            @Html.EditorFor(m => m.Nome, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.Nome, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Data de Nascimento -->
         <div class="form-group">
-            @Html.LabelFor(model => model.DataNascimento, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DataNascimento, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DataNascimento, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.DataNascimento)
+            @Html.EditorFor(m => m.DataNascimento, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.DataNascimento, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Nacionalidade -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Nacionalidade, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Nacionalidade, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Nacionalidade, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.Nacionalidade)
+            @Html.EditorFor(m => m.Nacionalidade, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.Nacionalidade, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Posição -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Posicao, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Posicao, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Posicao, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.Posicao)
+            @Html.EnumDropDownListFor(m => m.Posicao, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Posicao, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Número Camisa -->
         <div class="form-group">
-            @Html.LabelFor(model => model.NumeroCamisa, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NumeroCamisa, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NumeroCamisa, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.NumeroCamisa)
+            @Html.EditorFor(m => m.NumeroCamisa, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.NumeroCamisa, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Altura -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Altura, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Altura, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Altura, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.Altura)
+            @Html.EditorFor(m => m.Altura, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.Altura, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Peso -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Peso, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Peso, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Peso, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.Peso)
+            @Html.EditorFor(m => m.Peso, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(m => m.Peso, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Pé Preferido -->
         <div class="form-group">
-            @Html.LabelFor(model => model.PePreferido, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.PePreferido, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.PePreferido, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.PePreferido)
+            @Html.EnumDropDownListFor(m => m.PePreferido, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.PePreferido, "", new { @class = "text-danger" })
         </div>
 
+        <!-- Time -->
         <div class="form-group">
-            @Html.LabelFor(model => model.TimeId, "TimeId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("TimeId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.TimeId, "", new { @class = "text-danger" })
-            </div>
+            @Html.LabelFor(m => m.TimeId, "Time")
+            @Html.DropDownList("TimeId", (SelectList)ViewBag.TimeId, "Selecione o time", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.TimeId, "", new { @class = "text-danger" })
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
+        <input type="submit" value="Cadastrar Jogador" class="btn-submit" />
+    }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Voltar à lista", "Index", null, new { @class = "back-link" })
 </div>
 
 @section Scripts {
