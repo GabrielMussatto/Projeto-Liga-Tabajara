@@ -1,82 +1,171 @@
 ﻿@model IEnumerable<Projeto_Liga_Tabajara.Models.Time>
+@using Projeto_Liga_Tabajara.Models
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Times";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<style>
+    /* --- Mesma aparência do index de Partidas --- */
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Cidade)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Estado)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AnoFundacao)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Estadio)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CapacidadeEstadio)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CorUniformePrimaria)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CorUniformeSecundaria)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th></th>
-    </tr>
+    /* Toolbar superior */
+    .header-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Cidade)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Estado)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AnoFundacao)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Estadio)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CapacidadeEstadio)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CorUniformePrimaria)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CorUniformeSecundaria)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+    /* Formulário de busca: sem quebra de linha */
+    .search-form {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 auto 1rem;
+        max-width: 600px;
+    }
+
+        .search-form .form-control {
+            height: 2.4rem;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-form input[type="text"] {
+            flex: 1 1 200px;
+            min-width: 150px;
+        }
+
+        .search-form button {
+            height: 2.6rem;
+            padding: 0 1rem;
+            white-space: nowrap;
+        }
+
+    /* Tabela de times */
+    .times-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+    }
+
+        .times-table th {
+            background-color: #005f99;
+            color: white;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .times-table td {
+            padding: 0.75rem;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+
+        .times-table tbody tr:nth-child(even) {
+            background-color: #e9f7fe;
+        }
+
+        .times-table tbody tr:hover {
+            background-color: #d0efff;
+        }
+
+        .times-table th:first-child,
+        .times-table td:first-child {
+            text-align: left;
+        }
+
+        .times-table th:not(:first-child),
+        .times-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        .times-table td.actions {
+            white-space: nowrap;
+            min-width: 200px;
+        }
+
+        .times-table .actions a {
+            margin: 0 0.25rem;
+            font-size: 0.85rem;
+        }
+
+            .times-table .actions a:hover {
+                text-decoration: underline;
+            }
+</style>
+
+<div class="header-toolbar">
+    <h2>Times</h2>
+    @Html.ActionLink("Criar Novo Time", "Create", null, new { @class = "btn btn-success" })
+</div>
+
+@using (Html.BeginForm("Index", "Times", FormMethod.Get))
+{
+    <div class="search-form">
+        <input type="text"
+               name="nome"
+               value="@(ViewBag.NomeFilter ?? "")"
+               class="form-control"
+               placeholder="Nome do time" />
+
+        <input type="text"
+               name="estadio"
+               value="@(ViewBag.EstadioFilter ?? "")"
+               class="form-control"
+               placeholder="Estádio" />
+
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+        <button type="submit"
+                name="clear"
+                value="true"
+                class="btn btn-secondary">
+            Limpar filtros
+        </button>
+    </div>
 }
 
+<table class="times-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.First().Nome)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Cidade)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Estado)</th>
+            <th>@Html.DisplayNameFor(m => m.First().AnoFundacao)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Estadio)</th>
+            <th>@Html.DisplayNameFor(m => m.First().CapacidadeEstadio)</th>
+            <th>@Html.DisplayNameFor(m => m.First().CorUniformePrimaria)</th>
+            <th>@Html.DisplayNameFor(m => m.First().CorUniformeSecundaria)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Status)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.Cidade</td>
+                <td>@item.Estado</td>
+                <td>@item.AnoFundacao.ToString("yyyy")</td>
+                <td>@item.Estadio</td>
+                <td>@item.CapacidadeEstadio</td>
+                <td>@item.CorUniformePrimaria</td>
+                <td>@item.CorUniformeSecundaria</td>
+                <td>@(item.Status ? "Apto" : "Não Apto")</td>
+                <td class="actions">
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-secondary" })
+                    @Html.ActionLink("Detalhes", "Details", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-info ml-1" })
+                    @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-danger ml-1" })
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

@@ -1,91 +1,101 @@
 ﻿@model Projeto_Liga_Tabajara.Models.Time
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalhes do Time";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<style>
+    /* Container centralizado para os detalhes */
+    .details-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-<div>
-    <h4>Time</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
+        /* Título */
+        .details-container h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #005f99;
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
+        /* Lista de descrição */
+        .details-container dl {
+            margin: 0;
+        }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Cidade)
-        </dt>
+        .details-container dt {
+            font-weight: 600;
+            margin-top: 1rem;
+            color: #333;
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.Cidade)
-        </dd>
+        .details-container dd {
+            margin: 0 0 0.75rem 0;
+            padding-left: 0.5rem;
+            color: #555;
+        }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
+        /* Botões de ação */
+        .details-container .action-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
+            .details-container .action-links a {
+                display: inline-block;
+                margin: 0 0.5rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                color: #fff;
+                background-color: #005f99;
+                border-radius: 4px;
+                text-decoration: none;
+            }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.AnoFundacao)
-        </dt>
+                .details-container .action-links a:hover {
+                    background-color: #004070;
+                }
+</style>
 
-        <dd>
-            @Html.DisplayFor(model => model.AnoFundacao)
-        </dd>
+<div class="details-container">
+    <h2>Detalhes do Time</h2>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Estadio)
-        </dt>
+    <dl>
+        <dt>@Html.DisplayNameFor(m => m.Nome)</dt>
+        <dd>@Html.DisplayFor(m => m.Nome)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Estadio)
-        </dd>
+        <dt>@Html.DisplayNameFor(m => m.Cidade)</dt>
+        <dd>@Html.DisplayFor(m => m.Cidade)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.CapacidadeEstadio)
-        </dt>
+        <dt>@Html.DisplayNameFor(m => m.Estado)</dt>
+        <dd>@Html.DisplayFor(m => m.Estado)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.CapacidadeEstadio)
-        </dd>
+        <dt>@Html.DisplayNameFor(m => m.AnoFundacao)</dt>
+        <dd>@Html.DisplayFor(m => m.AnoFundacao)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.CorUniformePrimaria)
-        </dt>
+        <dt>@Html.DisplayNameFor(m => m.Estadio)</dt>
+        <dd>@Html.DisplayFor(m => m.Estadio)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.CorUniformePrimaria)
-        </dd>
+        <dt>@Html.DisplayNameFor(m => m.CapacidadeEstadio)</dt>
+        <dd>@Html.DisplayFor(m => m.CapacidadeEstadio)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.CorUniformeSecundaria)
-        </dt>
+        <dt>@Html.DisplayNameFor(m => m.CorUniformePrimaria)</dt>
+        <dd>@Html.DisplayFor(m => m.CorUniformePrimaria)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.CorUniformeSecundaria)
-        </dd>
+        <dt>@Html.DisplayNameFor(m => m.CorUniformeSecundaria)</dt>
+        <dd>@Html.DisplayFor(m => m.CorUniformeSecundaria)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
+        <dt>Status</dt>
+        <dd>@(Model.Status ? "Apto" : "Não Apto")</dd>
     </dl>
+
+    <div class="action-links">
+        @Html.ActionLink("Editar", "Edit", new { id = Model.Id })
+        @Html.ActionLink("Voltar à Lista", "Index")
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
