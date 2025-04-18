@@ -1,51 +1,86 @@
 ﻿@model Projeto_Liga_Tabajara.Models.ComissaoTecnica
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalhes da Comissão Técnica";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<style>
+    /* Container centralizado para os detalhes */
+    .details-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-<div>
-    <h4>ComissaoTecnica</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Time.Nome)
-        </dt>
+        /* Título centralizado */
+        .details-container h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #005f99;
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.Time.Nome)
-        </dd>
+        /* Lista de descrição */
+        .details-container dl {
+            margin: 0;
+        }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
+        .details-container dt {
+            font-weight: 600;
+            margin-top: 1rem;
+            color: #333;
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
+        .details-container dd {
+            margin: 0 0 0.75rem 0;
+            padding-left: 0.5rem;
+            color: #555;
+        }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Cargo)
-        </dt>
+        /* Botões de ação */
+        .details-container .action-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.Cargo)
-        </dd>
+            .details-container .action-links a {
+                display: inline-block;
+                margin: 0 0.5rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                color: #fff;
+                background-color: #005f99;
+                border-radius: 4px;
+                text-decoration: none;
+            }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </dt>
+                .details-container .action-links a:hover {
+                    background-color: #004070;
+                }
+</style>
 
-        <dd>
-            @Html.DisplayFor(model => model.DataNascimento)
-        </dd>
+<div class="details-container">
+    <h2>Detalhes da Comissão Técnica</h2>
 
+    <dl>
+        <dt>@Html.DisplayNameFor(m => m.Time.Nome)</dt>
+        <dd>@Html.DisplayFor(m => m.Time.Nome)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Nome)</dt>
+        <dd>@Html.DisplayFor(m => m.Nome)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.Cargo)</dt>
+        <dd>@Html.DisplayFor(m => m.Cargo)</dd>
+
+        <dt>@Html.DisplayNameFor(m => m.DataNascimento)</dt>
+        <dd>@Html.DisplayFor(m => m.DataNascimento)</dd>
     </dl>
+
+    <div class="action-links">
+        @Html.ActionLink("Editar", "Edit", new { id = Model.Id })
+        @Html.ActionLink("Voltar à Lista", "Index")
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

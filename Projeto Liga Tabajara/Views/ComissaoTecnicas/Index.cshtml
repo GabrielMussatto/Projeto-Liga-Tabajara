@@ -1,52 +1,157 @@
 ﻿@model IEnumerable<Projeto_Liga_Tabajara.Models.ComissaoTecnica>
+@using Projeto_Liga_Tabajara.Models
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Comissão Técnica";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<style>
+    /* --- Table styling copied from jogadores-table --- */
+    .comissao-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+    }
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Time.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Cargo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </th>
-        <th></th>
-    </tr>
+        .comissao-table th {
+            background-color: #005f99;
+            color: white;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Time.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nome)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Cargo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DataNascimento)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+        .comissao-table td {
+            padding: 0.75rem;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+
+        .comissao-table tbody tr:nth-child(even) {
+            background-color: #e9f7fe;
+        }
+
+        .comissao-table tbody tr:hover {
+            background-color: #d0efff;
+        }
+
+        .comissao-table th:first-child,
+        .comissao-table td:first-child {
+            text-align: left;
+        }
+
+        .comissao-table th:not(:first-child),
+        .comissao-table td:not(:first-child) {
+            text-align: center;
+        }
+
+        .comissao-table td.actions {
+            white-space: nowrap;
+            min-width: 160px;
+        }
+
+        .comissao-table .actions a {
+            margin: 0 0.25rem;
+            font-size: 0.85rem;
+        }
+
+            .comissao-table .actions a:hover {
+                text-decoration: underline;
+            }
+
+    /* --- Search form & header toolbar (unchanged) --- */
+    .header-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .search-form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 auto 1rem;
+        max-width: 600px;
+    }
+
+        .search-form .form-control {
+            height: 2.4rem;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-form input[type="text"] {
+            flex: 1 1 200px;
+            min-width: 150px;
+        }
+
+        .search-form select {
+            flex: 0 1 160px;
+        }
+
+        .search-form button {
+            height: 2.6rem;
+            padding: 0 1rem;
+        }
+</style>
+
+<div class="header-toolbar">
+    <h2>Comissão Técnica</h2>
+    @Html.ActionLink("Novo Membro", "Create", null, new { @class = "btn btn-success" })
+</div>
+
+@using (Html.BeginForm("Index", "ComissaoTecnicas", FormMethod.Get))
+{
+    <div class="search-form">
+        <input type="text"
+               name="nome"
+               value="@(ViewBag.NomeFilter ?? "")"
+               class="form-control"
+               placeholder="Buscar por nome" />
+
+        @Html.DropDownList(
+            "cargo",
+            (SelectList)ViewBag.CargoList,
+            "Todos os cargos",
+            new { @class = "form-control" }
+        )
+
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
 }
 
+<table class="comissao-table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.First().Time.Nome)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Nome)</th>
+            <th>@Html.DisplayNameFor(m => m.First().Cargo)</th>
+            <th>@Html.DisplayNameFor(m => m.First().DataNascimento)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Time.Nome</td>
+                <td>@item.Nome</td>
+                <td>@item.Cargo</td>
+                <td>@item.DataNascimento.ToString("dd/MM/yyyy")</td>
+                <td class="actions">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-secondary" })
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-info" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
