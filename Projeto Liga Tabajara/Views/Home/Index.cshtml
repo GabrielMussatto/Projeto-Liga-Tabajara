@@ -1,33 +1,240 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model Projeto_Liga_Tabajara.Models.Liga
+@using Projeto_Liga_Tabajara.Models
+@{
+    ViewBag.Title = "Liga Tabajara de Futebol";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    bool canSeeChampion = ViewBag.AllResultsIn ?? false;
+    string championName = ViewBag.ChampionName as string;
 }
 
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>@Model.Nome</h1>
+    <button id="btnChampion"
+            type="button"
+            class="btn btn-success"
+            @(canSeeChampion ? "" : "disabled")>
+        Ver Campeão
+    </button>
+</div>
+
+<!-- Modal Campeão -->
+<div class="modal fade" id="championModal" tabindex="-1" role="dialog" aria-labelledby="championModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h4 class="modal-title" id="championModalLabel">🏆 Campeão da Liga!</h4>
+            </div>
+            <div class="modal-body">
+                @if (canSeeChampion)
+                {
+                    <p>Parabéns ao <strong>@championName</strong> pelo título da Liga Tabajara!</p>
+                }
+                else
+                {
+                    <p>Nem todos os jogos foram concluídos ainda.</p>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-light" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Centraliza TODO o conteúdo de cabeçalhos e células em todas as tabelas */
+    .table th, .table td {
+        text-align: center;
+    }
+    /* Coluna “Time” e “Posição” alinhada à esquerda */
+    .classificacao-table th:nth-child(2), .classificacao-table td:nth-child(2),
+    .times-cadastrados th:nth-child(1), .times-cadastrados td:nth-child(1) {
+        text-align: left;
+    }
+    /* Cores e faixa lateral na classificação */
+    .classificacao-table tbody tr:nth-child(-n+4) {
+        background-color: #D0E7FF;
+        border-left: 5px solid #0055A4;
+    }
+
+    .classificacao-table tbody tr:nth-child(5),
+    .classificacao-table tbody tr:nth-child(6) {
+        background-color: #FFE7D0;
+        border-left: 5px solid #FF8C00;
+    }
+
+    .classificacao-table tbody tr:nth-child(n+7):nth-child(-n+12) {
+        background-color: #D0FFD8;
+        border-left: 5px solid #009640;
+    }
+
+    .classificacao-table tbody tr:nth-child(n+17):nth-child(-n+20) {
+        background-color: #FFD0D0;
+        border-left: 5px solid #C8102E;
+    }
+
+    .classificacao-table.table-bordered,
+    .classificacao-table.table-bordered th,
+    .classificacao-table.table-bordered td {
+        border: none;
+    }
+
+    .class-legend {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+        .class-legend span {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+    .leg-blue span {
+        background-color: #0055A4;
+    }
+
+    .leg-orange span {
+        background-color: #FF8C00;
+    }
+
+    .leg-green span {
+        background-color: #009640;
+    }
+
+    .leg-red span {
+        background-color: #C8102E;
+    }
+</style>
+
 <main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
+    <section class="row mb-4">
+        <div class="col-md-12">
+            <p class="lead">
+                Status da Liga:
+                <strong>@(Model.Status ? "Apta para iniciar" : "Não apta para iniciar")</strong>
+            </p>
+        </div>
     </section>
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
-    </div>
+    <!-- Classificação -->
+    <section class="row mb-5">
+        <div class="col-md-12">
+            <h2>Classificação</h2>
+            @{
+                var tabela = ViewBag.Classificacao as List<ClassificacaoTime>;
+            }
+            @if (tabela != null && tabela.Any())
+            {
+                <table class="table table-bordered table-striped classificacao-table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Time</th>
+                            <th>Pontos</th>
+                            <th>Jogos</th>
+                            <th>Vitórias</th>
+                            <th>Empates</th>
+                            <th>Derrotas</th>
+                            <th>Gols Pró</th>
+                            <th>Gols Contra</th>
+                            <th>Saldo Gols</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < tabela.Count; i++)
+                        {
+                            var c = tabela[i];
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td>@c.TimeNome</td>
+                                <td>@c.Pontos</td>
+                                <td>@c.Jogos</td>
+                                <td>@c.Vitorias</td>
+                                <td>@c.Empates</td>
+                                <td>@c.Derrotas</td>
+                                <td>@c.GolsPro</td>
+                                <td>@c.GolsContra</td>
+                                <td>@c.SaldoGols</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <ul class="class-legend">
+                    <li class="leg-blue"><span></span>1º–4º: Libertadores (Fase de Grupos)</li>
+                    <li class="leg-orange"><span></span>5º–6º: Pré‑Libertadores</li>
+                    <li class="leg-green"><span></span>7º–12º: Sul‑Americana</li>
+                    <li class="leg-red"><span></span>17º–20º: Rebaixamento</li>
+                </ul>
+            }
+            else
+            {
+                <p>Ainda não há partidas com resultado registrado.</p>
+            }
+        </div>
+    </section>
+
+    <!-- Times Cadastrados -->
+    <section class="row">
+        <div class="col-md-12">
+            <h2>Times Cadastrados (@(Model.Times?.Count() ?? 0))</h2>
+            @if (Model.Times != null && Model.Times.Any())
+            {
+                <table class="table table-striped times-cadastrados">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Cidade</th>
+                            <th>Estado</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var time in Model.Times)
+                        {
+                            <tr>
+                                <td>@time.Nome</td>
+                                <td>@time.Cidade</td>
+                                <td>@time.Estado</td>
+                                <td>@(time.Status ? "Apto" : "Não apto")</td>
+                                <td>
+                                    @Html.ActionLink("Detalhes", "Details", "Times", new { id = time.Id }, new { @class = "btn btn-sm btn-primary" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Nenhum time foi cadastrado ainda.</p>
+            }
+        </div>
+    </section>
 </main>
+
+@section Scripts {
+    <script>
+        (function () {
+            var btn = document.getElementById('btnChampion');
+            if (!btn) return;
+
+            btn.addEventListener('click', function () {
+                var modalEl = document.getElementById('championModal');
+
+                // Para Bootstrap 5
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    new bootstrap.Modal(modalEl).show();
+                }
+                // Para Bootstrap 3/4 com jQuery
+                else if (window.jQuery && jQuery.fn.modal) {
+                    jQuery(modalEl).modal('show');
+                }
+            });
+        })();
+    </script>
+}
