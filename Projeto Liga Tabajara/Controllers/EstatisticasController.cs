@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using Projeto_Liga_Tabajara.DataBase;
 using Projeto_Liga_Tabajara.Models;
@@ -18,22 +14,22 @@ namespace Projeto_Liga_Tabajara.Controllers
         // GET: Estatisticas
         public ActionResult Index()
         {
-            var estatisticas = db.Estatisticas.Include(e => e.Jogador).Include(e => e.Partida);
+            var estatisticas = db.Estatisticas
+                .Include(e => e.Jogador)
+                .Include(e => e.Jogador.Time)
+                .Include(e => e.Partida)
+                .Include(e => e.Partida.TimeMandante)
+                .Include(e => e.Partida.TimeVisitante);
+
             return View(estatisticas.ToList());
         }
 
         // GET: Estatisticas/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Estatistica estatistica = db.Estatisticas.Find(id);
-            if (estatistica == null)
-            {
-                return HttpNotFound();
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var estatistica = db.Estatisticas.Find(id);
+            if (estatistica == null) return HttpNotFound();
             return View(estatistica);
         }
 
@@ -46,12 +42,13 @@ namespace Projeto_Liga_Tabajara.Controllers
         }
 
         // POST: Estatisticas/Create
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,JogadorId,PartidaId,Gols")] Estatistica estatistica)
         {
+            if (db.Estatisticas.Any(e => e.JogadorId == estatistica.JogadorId && e.PartidaId == estatistica.PartidaId))
+                ModelState.AddModelError("", "Já existe estatística para este jogador nesta partida.");
+
             if (ModelState.IsValid)
             {
                 db.Estatisticas.Add(estatistica);
@@ -67,23 +64,16 @@ namespace Projeto_Liga_Tabajara.Controllers
         // GET: Estatisticas/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Estatistica estatistica = db.Estatisticas.Find(id);
-            if (estatistica == null)
-            {
-                return HttpNotFound();
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var estatistica = db.Estatisticas.Find(id);
+            if (estatistica == null) return HttpNotFound();
+
             ViewBag.JogadorId = new SelectList(db.Jogadores, "Id", "Nome", estatistica.JogadorId);
             ViewBag.PartidaId = new SelectList(db.Partidas, "Id", "Estadio", estatistica.PartidaId);
             return View(estatistica);
         }
 
         // POST: Estatisticas/Edit/5
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,JogadorId,PartidaId,Gols")] Estatistica estatistica)
@@ -102,15 +92,9 @@ namespace Projeto_Liga_Tabajara.Controllers
         // GET: Estatisticas/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Estatistica estatistica = db.Estatisticas.Find(id);
-            if (estatistica == null)
-            {
-                return HttpNotFound();
-            }
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var estatistica = db.Estatisticas.Find(id);
+            if (estatistica == null) return HttpNotFound();
             return View(estatistica);
         }
 
@@ -119,7 +103,7 @@ namespace Projeto_Liga_Tabajara.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Estatistica estatistica = db.Estatisticas.Find(id);
+            var estatistica = db.Estatisticas.Find(id);
             db.Estatisticas.Remove(estatistica);
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -127,10 +111,7 @@ namespace Projeto_Liga_Tabajara.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            if (disposing) db.Dispose();
             base.Dispose(disposing);
         }
     }

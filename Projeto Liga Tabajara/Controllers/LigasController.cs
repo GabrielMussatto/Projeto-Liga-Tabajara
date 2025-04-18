@@ -18,21 +18,46 @@ namespace Projeto_Liga_Tabajara.Controllers
         // GET: Ligas
         public ActionResult Index()
         {
-            return View(db.Ligas.ToList());
+            // 1) Carrega todas as ligas junto com os seus times
+            var ligas = db.Ligas
+                          .Include(l => l.Times)
+                          .ToList();
+
+            // 2) Para cada liga, recalcula o status
+            foreach (var liga in ligas)
+            {
+                bool apta = false;
+
+                if (liga.Times != null && liga.Times.Count == 20)
+                {
+                    // só está apta se TODOS os 20 times estiverem aptos
+                    apta = liga.Times.All(t => t.Status == true);
+                    apta = true;
+                }
+
+                // atualiza o campo se necessário
+                if (liga.Status != apta)
+                {
+                    liga.Status = apta;
+                    db.Entry(liga).State = EntityState.Modified;
+                }
+            }
+
+            db.SaveChanges();
+
+            return View(ligas);
         }
 
         // GET: Ligas/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Liga liga = db.Ligas.Find(id);
+
+            var liga = db.Ligas.Include(l => l.Times)
+                                .FirstOrDefault(l => l.Id == id);
             if (liga == null)
-            {
                 return HttpNotFound();
-            }
             return View(liga);
         }
 
@@ -43,19 +68,18 @@ namespace Projeto_Liga_Tabajara.Controllers
         }
 
         // POST: Ligas/Create
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Nome,Status")] Liga liga)
+        public ActionResult Create([Bind(Include = "Id,Nome")] Liga liga)
         {
             if (ModelState.IsValid)
             {
+                liga.Status = false;
+                liga.Times = new List<Time>();
                 db.Ligas.Add(liga);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
             return View(liga);
         }
 
@@ -63,27 +87,27 @@ namespace Projeto_Liga_Tabajara.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Liga liga = db.Ligas.Find(id);
+
+            var liga = db.Ligas.Find(id);
             if (liga == null)
-            {
                 return HttpNotFound();
-            }
             return View(liga);
         }
 
         // POST: Ligas/Edit/5
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Nome,Status")] Liga liga)
+        public ActionResult Edit([Bind(Include = "Id,Nome")] Liga liga)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(liga).State = EntityState.Modified;
+                var ligaDB = db.Ligas.Find(liga.Id);
+                if (ligaDB == null)
+                    return HttpNotFound();
+
+                ligaDB.Nome = liga.Nome;
+                db.Entry(ligaDB).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -94,14 +118,11 @@ namespace Projeto_Liga_Tabajara.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Liga liga = db.Ligas.Find(id);
+
+            var liga = db.Ligas.Find(id);
             if (liga == null)
-            {
                 return HttpNotFound();
-            }
             return View(liga);
         }
 
@@ -110,7 +131,7 @@ namespace Projeto_Liga_Tabajara.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Liga liga = db.Ligas.Find(id);
+            var liga = db.Ligas.Find(id);
             db.Ligas.Remove(liga);
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -118,10 +139,7 @@ namespace Projeto_Liga_Tabajara.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            if (disposing) db.Dispose();
             base.Dispose(disposing);
         }
     }

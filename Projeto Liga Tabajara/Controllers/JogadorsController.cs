@@ -16,9 +16,26 @@ namespace Projeto_Liga_Tabajara.Controllers
         private LigaContext db = new LigaContext();
 
         // GET: Jogadors
-        public ActionResult Index()
+        public ActionResult Index(string nome, Posicao? posicao, PePreferido? pePreferido)
         {
-            var jogadores = db.Jogadores.Include(j => j.Time);
+            // Carrega todos já com o Time
+            var jogadores = db.Jogadores.Include(j => j.Time).AsQueryable();
+
+            // filtros
+            if (!String.IsNullOrWhiteSpace(nome))
+                jogadores = jogadores.Where(j => j.Nome.Contains(nome));
+            if (posicao.HasValue)
+                jogadores = jogadores.Where(j => j.Posicao == posicao.Value);
+            if (pePreferido.HasValue)
+                jogadores = jogadores.Where(j => j.PePreferido == pePreferido.Value);
+
+            // para manter nos dropdowns
+            ViewBag.NomeFilter = nome;
+            ViewBag.PosicaoList = new SelectList(Enum.GetValues(typeof(Posicao)));
+            ViewBag.SelectedPosicao = posicao;
+            ViewBag.PePreferidoList = new SelectList(Enum.GetValues(typeof(PePreferido)));
+            ViewBag.SelectedPePreferido = pePreferido;
+
             return View(jogadores.ToList());
         }
 
@@ -45,16 +62,25 @@ namespace Projeto_Liga_Tabajara.Controllers
         }
 
         // POST: Jogadors/Create
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Nome,DataNascimento,Nacionalidade,Posicao,NumeroCamisa,Altura,Peso,PePreferido,TimeId")] Jogador jogador)
         {
+            // Validação: não permitir cadastro duplicado (mesmo Nome e DataNascimento)
+            bool jogadorJaExiste = db.Jogadores.Any(j => j.Nome == jogador.Nome);
+            if (jogadorJaExiste)
+            {
+                ModelState.AddModelError("", "Já existe um jogador com esse nome cadastrado.");
+            }
+
             if (ModelState.IsValid)
             {
                 db.Jogadores.Add(jogador);
                 db.SaveChanges();
+
+                // Após cadastro, atualiza o status do time associado
+                AtualizarStatusTime(jogador.TimeId);
+
                 return RedirectToAction("Index");
             }
 
@@ -79,8 +105,6 @@ namespace Projeto_Liga_Tabajara.Controllers
         }
 
         // POST: Jogadors/Edit/5
-        // Para proteger-se contra ataques de excesso de postagem, ative as propriedades específicas às quais deseja se associar. 
-        // Para obter mais detalhes, confira https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Nome,DataNascimento,Nacionalidade,Posicao,NumeroCamisa,Altura,Peso,PePreferido,TimeId")] Jogador jogador)
@@ -89,6 +113,10 @@ namespace Projeto_Liga_Tabajara.Controllers
             {
                 db.Entry(jogador).State = EntityState.Modified;
                 db.SaveChanges();
+
+                // Após a edição, atualiza o status do time vinculado
+                AtualizarStatusTime(jogador.TimeId);
+
                 return RedirectToAction("Index");
             }
             ViewBag.TimeId = new SelectList(db.Times, "Id", "Nome", jogador.TimeId);
@@ -116,10 +144,71 @@ namespace Projeto_Liga_Tabajara.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Jogador jogador = db.Jogadores.Find(id);
+            int timeId = jogador.TimeId;
             db.Jogadores.Remove(jogador);
             db.SaveChanges();
+
+            // Atualiza o status do time após a remoção do jogador
+            AtualizarStatusTime(timeId);
+
             return RedirectToAction("Index");
         }
+
+        // Método auxiliar que atualiza o status do time, verificando se o mesmo está apto para competir
+        private void AtualizarStatusTime(int timeId)
+        {
+            var time = db.Times.Include(t => t.Jogadores)
+                               .Include(t => t.ComissaoTecnica)
+                               .FirstOrDefault(t => t.Id == timeId);
+            if (time != null)
+            {
+                time.Status = VerificarTimeApto(time);
+                db.Entry(time).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
+        // Método que verifica se o time está apto para competir
+        private bool VerificarTimeApto(Time time)
+        {
+            // 1) Jogadores: mínimo de 30
+            if (time.Jogadores == null || time.Jogadores.Count < 29)
+                return false;
+
+            // 2) Posições obrigatórias
+            var posicoesObrigatorias = new[]
+            {
+                Posicao.Goleiro,
+                Posicao.Zagueiro,
+                Posicao.Volante,
+                Posicao.Meia,
+                Posicao.Atacante,
+                Posicao.Lateraldireito,
+                Posicao.Lateralesquerdo
+            };
+            // para cada posição, deve haver ao menos 1 jogador nela
+            if (!posicoesObrigatorias.All(pos =>
+                time.Jogadores.Any(j => j.Posicao == pos)))
+            {
+                return false;
+            }
+
+            // 3) Comissão técnica: mínimo de 5
+            if (time.ComissaoTecnica == null || time.ComissaoTecnica.Count < 4)
+                return false;
+
+            // 4) Sem cargos duplicados
+            if (time.ComissaoTecnica
+                    .GroupBy(ct => ct.Cargo)
+                    .Any(g => g.Count() > 1))
+            {
+                return false;
+            }
+
+            // só chega aqui se passou em todas as checagens
+            return true;
+        }
+
 
         protected override void Dispose(bool disposing)
         {
@@ -129,5 +218,6 @@ namespace Projeto_Liga_Tabajara.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }
