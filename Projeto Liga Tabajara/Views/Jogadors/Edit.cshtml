@@ -120,14 +120,16 @@
         <!-- Altura -->
         <div class="form-group">
             @Html.LabelFor(m => m.Altura)
-            @Html.EditorFor(m => m.Altura, new { htmlAttributes = new { @class = "form-control" } })
+            @*@Html.EditorFor(m => m.Altura, new { htmlAttributes = new { @class = "form-control" } })*@
+            @Html.TextBoxFor(m => m.Altura, "{0:0.00}", new { @class = "form-control", type = "text", placeholder = "00" })
             @Html.ValidationMessageFor(m => m.Altura, "", new { @class = "text-danger" })
         </div>
 
         <!-- Peso -->
         <div class="form-group">
             @Html.LabelFor(m => m.Peso)
-            @Html.EditorFor(m => m.Peso, new { htmlAttributes = new { @class = "form-control" } })
+            @*@Html.EditorFor(m => m.Peso, new { htmlAttributes = new { @class = "form-control" } })*@
+            @Html.TextBoxFor(m => m.Peso, "{0:0.00}", new { @class = "form-control", type = "text", placeholder = "00" })
             @Html.ValidationMessageFor(m => m.Peso, "", new { @class = "text-danger" })
         </div>
 
@@ -153,4 +155,11 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $.validator.methods.number = function (value, element) {
+            // se o usuário usar vírgula, troca por ponto
+            var val = value.replace(",", ".");
+            return this.optional(element) || /^-?\d+(\.\d+)?$/.test(val);
+        };
+    </script>
 }

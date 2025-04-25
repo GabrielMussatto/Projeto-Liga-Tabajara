@@ -28,8 +28,15 @@ namespace Projeto_Liga_Tabajara.Models
         public Posicao Posicao { get; set; }
         [Display(Name = "Número Camisa")]
         public int NumeroCamisa { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:0.00}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Altura (m)")]
         public double Altura { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:0.00}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Peso (kg)")]
         public double Peso { get; set; }
+
         [Display(Name = "Pé Preferido")]
         public PePreferido PePreferido { get; set; }
 
