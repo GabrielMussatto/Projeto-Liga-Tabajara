@@ -128,7 +128,7 @@ namespace Projeto_Liga_Tabajara.Controllers
         private bool VerificarTimeApto(Time time)
         {
             // 1) Jogadores: mínimo de 30
-            if (time.Jogadores == null || time.Jogadores.Count < 29)
+            if (time.Jogadores == null || time.Jogadores.Count <= 29)
                 return false;
 
             // 2) Posições obrigatórias
@@ -150,7 +150,7 @@ namespace Projeto_Liga_Tabajara.Controllers
             }
 
             // 3) Comissão técnica: mínimo de 5
-            if (time.ComissaoTecnica == null || time.ComissaoTecnica.Count < 4)
+            if (time.ComissaoTecnica == null || time.ComissaoTecnica.Count <= 4)
                 return false;
 
             // 4) Sem cargos duplicados

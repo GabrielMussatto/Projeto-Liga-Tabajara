@@ -58,9 +58,7 @@ namespace Projeto_Liga_Tabajara.Controllers
                 var mand = dict[p.TimeMandanteId];
                 var vis = dict[p.TimeVisitanteId];
 
-                mand.Jogos++;
-                vis.Jogos++;
-
+                mand.Jogos++; vis.Jogos++;
                 mand.GolsPro += p.GolsMandante;
                 mand.GolsContra += p.GolsVisitante;
                 vis.GolsPro += p.GolsVisitante;
@@ -85,24 +83,28 @@ namespace Projeto_Liga_Tabajara.Controllers
 
             var classification = dict.Values.ToList();
 
-            // 4) Habilita “Ver Campeão” somente se todos jogaram 38 partidas
-            bool allPlayed38 = classification.All(c => c.Jogos == 38);
+            // 5) Habilita “Ver Campeão” somente se todos os times jogaram 38 partidas
+            bool hasTeams = classification.Any();
+            bool allPlayed38 = hasTeams && classification.All(c => c.Jogos == 38);
             ViewBag.AllResultsIn = allPlayed38;
-            ViewBag.ChampionName = allPlayed38
-                                    ? classification
-                                        .OrderByDescending(c => c.Pontos)
-                                        .ThenByDescending(c => c.SaldoGols)
-                                        .First()
-                                        .TimeNome
-                                    : null;
 
-            // 5) Ordena para exibir
+            if (allPlayed38)
+            {
+                var champ = classification
+                             .OrderByDescending(c => c.Pontos)
+                             .ThenByDescending(c => c.SaldoGols)
+                             .First();
+                ViewBag.ChampionName = champ.TimeNome;
+                ViewBag.ChampionPoints = champ.Pontos;
+            }
+
+            // 6) Ordena para exibição
             var ranking = classification
                           .OrderByDescending(c => c.Pontos)
                           .ThenByDescending(c => c.SaldoGols)
                           .ToList();
-
             ViewBag.Classificacao = ranking;
+
             return View(liga);
         }
     }
